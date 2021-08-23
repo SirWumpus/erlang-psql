@@ -2,14 +2,29 @@ Erlang psql(1) CLI
 ==================
 
 ```
-usage: epsql [-h host[:port]][-u user][-p password] [database]
+usage: epsql [-h host][-p port][-P pass][-U user] [database]
 
--h host[:port]  hostname with optional port; default "localhost:5432"
--u user         user to connect as; default "postgres"
--p password     user password; prompt otherwise
+-h host         host to connect to; default "127.0.0.1"
+-p port         port number to connect to; default "5432"
+-P pass         user password
+-U user         user to connect as; default "$USER"
 ```
 
-This is a simple `psql(1)` like CLI tool.
+A simple `psql(1)` like CLI tool that reads standard input for SQL statements passing them on to the connected PostgreSQL server.
+For example:
+
+```
+$ echo "CREATE DATABASE black;" |  epsql -U postgres
+$ epsql -U postgres black <<EOT
+CREATE TABLE bart (
+  id SERIAL,
+  name VARCHAR(32),
+  colour VARCHAR(8)
+);
+CREATE INDEX bart ON bart(name);
+EOT
+$
+```
 
 
 Copyright

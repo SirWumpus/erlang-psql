@@ -2,10 +2,11 @@ Erlang psql(1) CLI
 ==================
 
 ```
-usage: epsql [-h host][-p port][-P pass][-U user] [database]
+usage: epsql [-v][-h host][-p port][-t ms][-P pass][-U user] [database]
 
 -h host         host to connect to; default "127.0.0.1"
 -p port         port number to connect to; default "5432"
+-t ms           connection timeout in milliseconds; default "5000"
 -P pass         user password
 -U user         user to connect as; default "$USER"
 ```

@@ -6,12 +6,14 @@
 -include_lib("epgsql/include/epgsql.hrl").
 
 -type io_input() :: standard_io | file:io_device().
+-type io_data()  :: {ok, string()} | {error, any()} | eof.
 
 -spec usage() -> no_return().
 usage() ->
-	io:format("usage: epsql [-v][-h host][-p port][-P pass][-U user] [database]~n~n"),
+	io:format("usage: epsql [-v][-h host][-p port][-t ms][-P pass][-U user] [database]~n~n"),
 	io:format("-h host\t\thost to connect to; default \"127.0.0.1\"~n"),
 	io:format("-p port\t\tport number to connect to; default \"5432\"~n"),
+	io:format("-t ms\t\tconnection timeout in milliseconds; default \"5000\"~n"),
 	io:format("-P pass\t\tuser password~n"),
 	io:format("-U user\t\tuser to connect as; default \"~s\"~n", [os:getenv("USER", "")]),
 	io:format("-v\t\tverbose output~n"),
@@ -22,6 +24,7 @@ main(Args) ->
 	case opts:to_map(Args, [
 		{ $h, param, hostname },
 		{ $p, param, port     },
+		{ $t, param, timeout  },
 		{ $P, param, password },
 		{ $U, param, username },
 		{ $v, flag,  verbose  }
@@ -40,7 +43,8 @@ process([Database | _Args]) ->
 	PgOpts0 = #{
 		host => opts:get(hostname, "127.0.0.1"),
 		port => list_to_integer(opts:get(portnum, "5432")),
-		username => opts:get(username, os:getenv("USER"))
+		username => opts:get(username, os:getenv("USER")),
+		timeout => list_to_integer(opts:get(timeout, "5000"))
 	},
 	PgOpts1 = map_set(PgOpts0, password, opts:get(password)),
 	PgOpts2 = map_set(PgOpts1, database, Database),

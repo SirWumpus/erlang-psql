@@ -65,7 +65,7 @@ map_set(Map0, Key, Value) ->
 -spec psql(epgsql:connection(), io_input()) -> ok.
 psql(C, Fp) ->
 	% Read and SQL statement.
-	case read_delim(Fp, $;) of
+	case read_sql(Fp) of
 	{ok, Sql} ->
 		case epgsql:equery(C, Sql) of
 		{error, Reason} ->
@@ -80,17 +80,26 @@ psql(C, Fp) ->
 		ok
 	end.
 
--spec read_delim(io_input(), char()) -> {ok, string()} | {error, any()} | eof.
-read_delim(Fp, Delim) ->
-	read_delim(Fp, Delim, []).
+-spec read_sql(io_input()) -> io_data().
+read_sql(Fp) ->
+	case file:read(Fp, 1) of
+	{ok, "\\"} ->
+		cmd_to_sql(read_delim(Fp, $\n, "\\"));
+	{ok, Ch} ->
+		read_delim(Fp, $;, Ch);
+	eof ->
+		eof;
+	Other ->
+		Other
+	end.
 
--spec read_delim(io_input(), char(), [string()]) -> {ok, string()} | {error, any()} | eof.
+-spec read_delim(io_input(), char(), string()) -> io_data().
 read_delim(Fp, Delim, Acc) ->
 	case file:read(Fp, 1) of
 	{ok, [Delim]} ->
 		{ok, lists:reverse(Acc)};
-	{ok, Byte} ->
-		read_delim(Fp, Delim, [Byte | Acc]);
+	{ok, [Ch]} ->
+		read_delim(Fp, Delim, [Ch | Acc]);
 	eof ->
 		case lists:reverse(Acc) of
 		[] ->
@@ -154,3 +163,13 @@ headings([Col | Cols]) ->
 	io:format("\"~s\"", [Col#column.name]),
 	comma_nl(length(Cols)),
 	headings(Cols).
+
+-spec cmd_to_sql(Cmd :: string()) -> string().
+cmd_to_sql({ok, "\\l"}) ->
+	{ok, "SELECT datname FROM pg_database;"};
+cmd_to_sql({ok, "\\dt"}) ->
+	{ok, "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';"};
+cmd_to_sql({ok, "\\q"}) ->
+	eof;
+cmd_to_sql(Other) ->
+	Other.

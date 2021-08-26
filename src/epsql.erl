@@ -124,11 +124,15 @@ result({ok, _Cols, Rows}, _) when length(Rows) == 0 ->
 result({ok, Cols, Rows}, _) ->
 	% SELECT
 	headings(Cols),
-	rows(Rows);
+	ruler(Cols),
+	rows(Rows),
+	io:format("(~B rows)~n~n", [length(Rows)]);
 result({ok, _Count, Cols, Rows}, _) ->
 	% INSERT...RETURNING...
 	headings(Cols),
-	rows(Rows).
+	ruler(Cols),
+	rows(Rows),
+	io:format("(~B rows)~n~n", [length(Rows)]).
 
 -spec rows([tuple()]) -> ok.
 rows([]) ->
@@ -163,6 +167,14 @@ headings([Col | Cols]) ->
 	io:format("\"~s\"", [Col#column.name]),
 	comma_nl(length(Cols)),
 	headings(Cols).
+
+-spec ruler([map()]) -> ok.
+ruler([]) ->
+	ok;
+ruler([Col | Cols]) ->
+	io:format("\"~*..-s\"", [byte_size(Col#column.name), ""]),
+	comma_nl(length(Cols)),
+	ruler(Cols).
 
 -spec cmd_to_sql(Cmd :: string()) -> string().
 cmd_to_sql({ok, "\\l"}) ->

@@ -64,7 +64,7 @@ map_set(Map0, Key, Value) ->
 
 -spec psql(epgsql:connection(), io_input()) -> ok.
 psql(C, Fp) ->
-	% Read and SQL statement.
+	% Read an SQL statement.
 	case read_sql(Fp) of
 	{ok, Sql} ->
 		case epgsql:equery(C, Sql) of

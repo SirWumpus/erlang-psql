@@ -12,10 +12,11 @@ usage: epsql [-v][-h host][-p port][-t ms][-P pass][-U user] [database]
 ```
 
 A simple `psql(1)` like CLI tool that reads standard input for SQL statements passing them on to the connected PostgreSQL server.
-For example:
+
+### Create A Database
 
 ```
-$ echo "CREATE DATABASE black;" |  epsql -U postgres
+$ echo "CREATE DATABASE black;" | epsql -U postgres
 $ epsql -U postgres black <<EOT
 CREATE TABLE bart (
   id SERIAL,
@@ -27,11 +28,38 @@ EOT
 $
 ```
 
+### List Databases
+
+```
+$ echo "SELECT datname FROM pg_database;" | epsql -U postgres
+```
+
+### List Datbase Tables
+
+```
+$ epsql -U postgres black <<EOT
+SELECT tablename FROM pg_catalog.pg_tables WHERE
+  schemaname != 'pg_catalog' AND
+  schemaname != 'information_schema';
+EOT
+$
+```
+
+### List Table Schema
+
+```
+$ epsql -U postgres black <<EOT
+SELECT column_name, data_type, character_maximum_length
+  FROM information_schema.columns WHERE table_name = 'bart';
+EOT
+$
+```
+
 
 Copyright
 ---------
 
-Copyright 2021 by Anthony Howe.  All rights reserved.
+Copyright 2021, 2022 by Anthony Howe.  All rights reserved.
 
 
 MIT License

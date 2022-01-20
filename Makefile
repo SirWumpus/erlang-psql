@@ -28,8 +28,8 @@ distclean: clean
 tar:
 	git archive --format tar.gz --prefix ${PROJ}/ -o ${PROJ}.tar.gz HEAD
 
-test:
-	rebar3 dialyzer
+tests:
+	rebar3 as test dialyzer
 
 # Not ready yet.
 #	rebar3 ct

@@ -160,7 +160,7 @@ cols([Col | Cols]) ->
 	comma_nl(length(Cols)),
 	cols(Cols).
 
--spec headings([map()]) -> ok.
+-spec headings([#column{}]) -> ok.
 headings([]) ->
 	ok;
 headings([Col | Cols]) ->
@@ -168,7 +168,7 @@ headings([Col | Cols]) ->
 	comma_nl(length(Cols)),
 	headings(Cols).
 
--spec ruler([map()]) -> ok.
+-spec ruler([#column{}]) -> ok.
 ruler([]) ->
 	ok;
 ruler([Col | Cols]) ->
@@ -176,7 +176,7 @@ ruler([Col | Cols]) ->
 	comma_nl(length(Cols)),
 	ruler(Cols).
 
--spec cmd_to_sql(Cmd :: string()) -> string().
+-spec cmd_to_sql(Cmd :: {ok, string()} | string()) -> {ok, string()} | eof.
 cmd_to_sql({ok, Cmd}) ->
 	cmd_to_sql(string:tokens(Cmd, " "));
 cmd_to_sql(["\\q"]) ->

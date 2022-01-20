@@ -177,11 +177,15 @@ ruler([Col | Cols]) ->
 	ruler(Cols).
 
 -spec cmd_to_sql(Cmd :: string()) -> string().
-cmd_to_sql({ok, "\\l"}) ->
-	{ok, "SELECT datname FROM pg_database;"};
-cmd_to_sql({ok, "\\dt"}) ->
-	{ok, "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';"};
-cmd_to_sql({ok, "\\q"}) ->
+cmd_to_sql({ok, Cmd}) ->
+	cmd_to_sql(string:tokens(Cmd, " "));
+cmd_to_sql(["\\q"]) ->
 	eof;
+cmd_to_sql(["\\l"]) ->
+	{ok, "SELECT datname FROM pg_database;"};
+cmd_to_sql(["\\dt"]) ->
+	{ok, "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';"};
+cmd_to_sql(["\\d", Table]) ->
+	{ok, "SELECT column_name, data_type, character_maximum_length FROM information_schema.columns WHERE table_name = '"++ Table ++"';"};
 cmd_to_sql(Other) ->
 	Other.

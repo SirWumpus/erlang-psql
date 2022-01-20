@@ -33,6 +33,10 @@ $
 ```
 $ echo "SELECT datname FROM pg_database;" | epsql -U postgres
 ```
+Or
+```
+$ echo '\l' | epsql -U postgres
+```
 
 ### List Datbase Tables
 
@@ -44,6 +48,10 @@ SELECT tablename FROM pg_catalog.pg_tables WHERE
 EOT
 $
 ```
+Or
+```
+$ echo '\dt' | epsql -U postgres black
+```
 
 ### List Table Schema
 
@@ -53,6 +61,16 @@ SELECT column_name, data_type, character_maximum_length
   FROM information_schema.columns WHERE table_name = 'bart';
 EOT
 $
+```
+Or
+```
+$ echo '\d bart' | epsql -U postgres black
+```
+
+### Quit (noop)
+
+```
+$ echo '\q' | epsql -U postgres
 ```
 
 

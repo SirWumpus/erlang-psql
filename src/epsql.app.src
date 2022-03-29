@@ -1,9 +1,10 @@
-{application,epsql,
-             [{pkg_name,"epsql"},
-              {vsn,"0.1.0"},
-              {description,"Simple Erlang psql(1) like CLI tool."},
-              {links,[{"Github","https://github.com/SirWumpus/erlang-psql"}]},
-              {applications,[kernel,stdlib,egetopt,epgsql]},
-              {licenses,["MIT"]},
-              {modules,[epsql]},
-              {files,["README.md","makefile","rebar.config","src","test"]}]}.
+{application,epsql,[
+    {pkg_name,"epsql"},
+    {vsn,"0.1.0"},
+    {description,"Simple Erlang psql(1) like CLI tool."},
+    {applications,[kernel,stdlib,egetopt,epgsql]},
+    {modules,[epsql]},
+    {licenses,["MIT"]},
+    {links,[{"Github","https://github.com/SirWumpus/erlang-psql"}]},
+    {files,["README.md","Makefile","rebar.config","src","test"]}
+]}.

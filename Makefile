@@ -30,7 +30,4 @@ tar:
 
 tests:
 	rebar3 as test dialyzer
-
-# Not ready yet.
-#	rebar3 ct
-
+	rebar3 as test ct
